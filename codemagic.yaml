@@ -1,31 +1,18 @@
 workflows:
-  unity-ios-unsigned:
-    name: Unity iOS Unsigned Build
+  ios-build:
+    name: Build iOS IPA (unsigned)
     max_build_duration: 60
     environment:
-      vars:
-        UNITY_VERSION: 2023.2.18f1 # غيرها حسب نسخة Unity عندك
       xcode: latest
     scripts:
-      - name: Activate Unity
-        script: |
-          unity-editor \
-            -batchmode \
-            -quit \
-            -nographics \
-            -logFile /dev/stdout \
-            -projectPath . \
-            -buildTarget iOS \
-            -customBuildTarget iOS \
-            -customBuildName "MyGame" \
-            -customBuildPath build/ios
-      - name: Build Xcode project
+      - name: Build IPA without signing
         script: |
           cd build/ios
           xcodebuild \
             -scheme Unity-iPhone \
             -configuration Release \
             -archivePath $PWD/build/MyGame.xcarchive archive
+
           xcodebuild \
             -exportArchive \
             -archivePath $PWD/build/MyGame.xcarchive \
@@ -37,8 +24,6 @@ workflows:
               <string>development</string>
               <key>signingStyle</key>
               <string>manual</string>
-              <key>compileBitcode</key>
-              <false/>
               <key>signingCertificate</key>
               <string></string>
               <key>provisioningProfiles</key>
